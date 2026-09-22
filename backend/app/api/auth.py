@@ -14,7 +14,11 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)):
     existing = db.query(User).filter(User.username == payload.username).first()
     if existing:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="username already taken")
-    user = User(username=payload.username, password_hash=hash_password(payload.password), role=payload.role)
+    user = User(
+        username=payload.username,
+        password_hash=hash_password(payload.password),
+        role=payload.role.upper(),
+    )
     db.add(user)
     db.commit()
     db.refresh(user)
